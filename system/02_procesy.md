@@ -103,13 +103,8 @@ Použij příkaz `ps aux` a výsledek seřaď tak, abys viděl procesy, které z
 **Úloha 3: Bezpečné ukončení simulace**
 Spusť na pozadí příkaz `sleep 500 &`. Zjisti jeho PID pomocí příkazu `ps` a poté tento proces ukonči standardním příkazem `kill`. Do souboru `ukonceni.log` zapiš zprávu o úspěšném smazání procesu z paměti.
 
-**Komplexní úloha:**
-Maturitní scénář: "Úklid systému".
-
-1. Do souboru `system_audit.txt` ulož aktuální přehled vytížení systému (použij `top -b -n 1`).
-2. Do stejného souboru přidej informaci o aktuálně volné paměti RAM v lidsky čitelné formě.
-3. Najdi PID procesu `systemd` a ulož jej do souboru `systemd_pid.txt`.
-4. Pomocí příkazu `pkill` ukonči všechny běžící procesy, které v názvu obsahují slovo `firefox`. Pokud žádné neběží, do souboru `cleanup.log` zapiš: "Žádné prohlížeče nebyly nalezeny".
+**Úloha 4: Rychlý úklid prohlížeče**
+Ukonči všechny běžící instance prohlížeče `firefox` jedním příkazem.
 
 ---
 
@@ -136,6 +131,7 @@ ps aux --sort=-%mem > pametove_procesy.txt
   - Přepínač `--sort` umožňuje řadit výpis. Znaménko mínus `-` znamená, že největší hodnoty budou nahoře.
 
 **Řešení 3:**
+
 ```bash
 sleep 500 &
 ps aux | grep "sleep" | grep -v "grep" | awk '{ print $2 }' | xargs kill
@@ -145,22 +141,11 @@ echo "Proces sleep byl ukončen" > ukonceni.log
 - **Vysvětlení:**
   - `&` na konci příkazu ho spustí na pozadí, takže můžeš dál psát do terminálu. `kill` bez přepínačů pošle standardní žádost o ukončení.
 
-**Řešení komplexní úlohy:**
+**Řešení 4:**
+
 ```bash
-# 1. Audit systému
-top -b -n 1 > system_audit.txt
-
-# 2. Volná paměť
-echo "--- Volná RAM ---" >> system_audit.txt
-free -h | grep "Mem:" | awk '{ print $4 }' >> system_audit.txt
-
-# 3. PID systemd
-ps aux | grep "systemd" | head -n 1 | awk '{ print $2 }' > systemd_pid.txt
-
-# 4. Cleanup prohlížečů
-pkill firefox || echo "Žádné prohlížeče nebyly nalezeny" > cleanup.log
+pkill firefox
 ```
+
 - **Vysvětlení:**
-  - `xargs kill` vezme PID (číslo), které mu poslal awk, a okamžitě ho předá příkazu kill.
-  - `ps aux | ... | awk` je standardní cesta, jak z výpisu vytáhnout konkrétní sloupec s PID (2. sloupec).
-  - Operátor `||` (nebo) provede druhý příkaz pouze tehdy, pokud ten první selhal (v tomto případě když pkill nenašel žádný firefox).
+  - `pkill` ukončí všechny procesy se shodným názvem bez nutnosti hledat jednotlivá PID.
