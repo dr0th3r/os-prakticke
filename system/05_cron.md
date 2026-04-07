@@ -37,6 +37,7 @@ Každý řádek v crontabu má 5 polí pro čas a následně samotný příkaz:
 ```
 
 **Speciální znaky:**
+
 - `*`: Každá (minuta, hodina, ...)
 - `,`: Seznam hodnot (např. `1,15,30` v minutách)
 - `-`: Rozsah (např. `1-5` v dnech v týdnu znamená pondělí až pátek)
@@ -83,42 +84,25 @@ Zapiš úlohu, která se spustí každých 5 minut, zjistí aktuální čas (př
 **Úloha 3: Práce s rozsahy**
 Nastav crontab tak, aby se od pondělí do pátku, vždy v 8:00 a v 16:00, spustil skript `/home/student/sync.sh`.
 
-**Komplexní úloha:**
-1. Vytvoř jednoduchý skript `disk_alert.sh`, který do souboru `~/disk_usage.log` připíše aktuální datum a výpis `df -h`.
-2. Naplánuj tento skript v crontabu tak, aby běžel každou hodinu, ale pouze o víkendu (sobota a neděle).
-
 ---
 
 ### 5. Řešení cvičení
 
 **Řešení 1:**
 V `crontab -e` přidat:
+
 ```bash
 0 23 * * 0 echo "Tydenni udrzba" >> /var/log/maintenance.log
 ```
 
 **Řešení 2:**
+
 ```bash
 */5 * * * * date >> /tmp/cas_kontroly.txt
 ```
 
 **Řešení 3:**
+
 ```bash
 0 8,16 * * 1-5 /home/student/sync.sh
 ```
-
-**Řešení komplexní úlohy:**
-
-Skript `disk_alert.sh`:
-```bash
-#!/bin/bash
-date >> ~/disk_usage.log
-df -h >> ~/disk_usage.log
-```
-(Nezapomeň na `chmod +x disk_alert.sh`)
-
-Zápis v `crontab -e`:
-```bash
-0 * * * 6,0 /home/student/disk_alert.sh
-```
-- **Vysvětlení:** `0` v minutách znamená "na začátku hodiny". `*` v hodinách znamená "každou hodinu". `6,0` znamená sobota a neděle.
